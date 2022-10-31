@@ -1,9 +1,14 @@
 import * as React from 'react';
+import Schedule from '../../components/Schedule';
+import { Typography } from 'antd';
 
-const Schedule: React.FC = () => {
+const SchedulePage: React.FC = () => {
 	return (
-		<h1>123</h1>
+		<>
+			<Typography.Title>Расписание</Typography.Title>
+			<Schedule />
+		</>
 	);
 };
 
-export default Schedule;
+export default SchedulePage;

@@ -1,25 +1,28 @@
 import React, { useCallback, useEffect } from 'react';
-import { Form, Input, Modal } from 'antd';
-import { ClientCategory } from '../../../store/Client';
+import { Form, Input, InputNumber, Modal } from 'antd';
 import { observer, useLocalStore } from 'mobx-react-lite';
 import { reaction } from 'mobx';
 import { ColorInput } from './styles';
+import { Service } from '../../../store/Services';
 
 type Props = {
-	data?: ClientCategory;
+	data?: Service;
 
 	onClose?: () => void;
 }
 
-const defaultData: ClientCategory = {
+const defaultData: Service = {
 	id: null,
-	title: '',
-	color: ''
+	name: '',
+	color: '',
+	price: null,
+	duration: null,
+	description: ''
 };
 
-const CategoryModal: React.FC<Props> = ({ onClose, data }) => {
+const ServiceModal: React.FC<Props> = ({ onClose, data }) => {
 	const [form] = Form.useForm();
-	const title = data ? 'Редактировать категорию' : 'Добавить категорию';
+	const title = data ? 'Редактировать услугу' : 'Добавить услугу';
 
 	const store = useLocalStore(() => ({
 		data: data ? data : defaultData,
@@ -28,7 +31,7 @@ const CategoryModal: React.FC<Props> = ({ onClose, data }) => {
 
 	useEffect(() => {
 		const dispose = reaction(
-			() => !!store.data.color && !!store.data.title,
+			() => !!store.data.color && !!store.data.name && !!store.data.price && !!store.data.duration,
 			(isValid) => {
 				store.isValid = isValid;
 			},
@@ -68,10 +71,28 @@ const CategoryModal: React.FC<Props> = ({ onClose, data }) => {
 			>
 				<Form.Item
 					label="Название"
-					name="title"
-					rules={ [{ required: true, message: 'Введите название категории' }] }
+					name="name"
+					rules={ [{ required: true, message: 'Введите название услуги' }] }
 				>
 					<Input />
+				</Form.Item>
+				<Form.Item
+					name="price"
+					label="Стоимость, рублей"
+					rules={ [{ required: true, message: 'Введите стоимость' }] }
+				>
+					<InputNumber
+						style={ { width: '100%' } }
+					/>
+				</Form.Item>
+				<Form.Item
+					name="duration"
+					label="Продолжительность, минут"
+					rules={ [{ required: true, message: 'Введите продолжительность' }] }
+				>
+					<InputNumber
+						style={ { width: '100%' } }
+					/>
 				</Form.Item>
 				<Form.Item
 					label="Цвет"
@@ -80,9 +101,12 @@ const CategoryModal: React.FC<Props> = ({ onClose, data }) => {
 				>
 					<ColorInput type="color" />
 				</Form.Item>
+				<Form.Item label="Комментарий" name="description" labelCol={ { span: 24 } }>
+					<Input.TextArea rows={ 4 } />
+				</Form.Item>
 			</Form>
 		</Modal>
 	);
 };
 
-export default observer(CategoryModal);
+export default observer(ServiceModal);
